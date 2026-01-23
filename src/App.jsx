@@ -14,9 +14,12 @@ import {
   UserPlus,
   Rocket,
   Brain,
-  Layers
+  Layers,
+  Code
 } from 'lucide-react';
+import AICoachDemo from './components/AICoachDemo';
 import content from './content.json';
+import qrcodeImg from './assets/qrcode.jpg';
 
 // Animation variants
 const fadeInUp = {
@@ -262,8 +265,19 @@ const ComparisonScaleSVG = () => (
 );
 
 function App() {
+  const [activeTool, setActiveTool] = useState(null);
+
   const scrollTo = (id) => {
     const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleToolClick = (toolIndex) => {
+    const toolMap = ['customer-service', 'contract-gen', 'competitor-analysis', 'meeting-summary'];
+    setActiveTool(toolMap[toolIndex]);
+    const element = document.getElementById('demo-section');
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
@@ -280,6 +294,16 @@ function App() {
   };
 
   const methodologyColors = ['blue', 'indigo', 'purple'];
+
+  const getShowcaseIcon = (iconName) => {
+    const icons = {
+      MessageCircle: <MessageCircle />,
+      FileText: <FileText />,
+      Target: <Target />,
+      Clock: <Clock />
+    };
+    return icons[iconName] || <Code />;
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-brand-100">
@@ -317,7 +341,7 @@ function App() {
               {content.hero.badge}
             </motion.div>
             
-            <motion.h1 variants={fadeInUp} className="text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 mb-8 leading-tight">
+            <motion.h1 variants={fadeInUp} className="text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 mb-8 leading-[1.15]">
               {content.hero.title.prefix} <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">{content.hero.title.highlight}</span>，<br/>
               {content.hero.title.suffix} <span className="relative whitespace-nowrap">
                 <span className="relative z-10">{content.hero.title.underline}</span>
@@ -325,8 +349,8 @@ function App() {
               </span>
             </motion.h1>
             
-            <motion.p variants={fadeInUp} className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed mb-12">
-              {content.hero.description}
+            <motion.p variants={fadeInUp} className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed mb-12 whitespace-pre-line">
+              {content.hero.description.replace("/n", "\n")}
             </motion.p>
 
             <motion.div variants={fadeInUp} className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
@@ -379,7 +403,7 @@ function App() {
             <div className="flex justify-center order-2">
               <div className="w-full max-w-[280px] h-48">
                 <ComparisonScaleSVG />
-                <p className="text-center text-xs text-slate-400 mt-4">服务价值权重对比</p>
+                <p className="text-center text-xs text-slate-400 mt-4">{content.comparison.chartLabel}</p>
               </div>
             </div>
 
@@ -410,7 +434,7 @@ function App() {
       <section className="py-24 bg-slate-900 text-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-12 gap-16 items-center">
-            <div className="md:col-span-5 md:pl-12">
+            <div className="md:col-span-5 md:pl-24">
               <div className="inline-block px-3 py-1 bg-indigo-500/20 text-indigo-300 rounded-full text-xs font-bold mb-6 border border-indigo-500/30">
                 {content.methodology.badge}
               </div>
@@ -438,9 +462,9 @@ function App() {
               </div>
             </div>
             
-            <div className="md:col-span-7 relative h-[500px] w-full flex items-center justify-center">
+            <div className="md:col-span-7 relative h-[500px] w-full flex items-end justify-center pb-8">
               <div className="absolute inset-0 bg-blue-500/5 blur-3xl rounded-full"></div>
-              <div className="relative z-10 w-full max-w-lg">
+              <div className="relative z-10 w-full max-w-lg translate-y-8">
                 <PyramidSVG />
               </div>
             </div>
@@ -549,6 +573,63 @@ function App() {
         </div>
       </section>
 
+      {/* 工具成果展示 (Showcase) */}
+      <section className="py-24 bg-gradient-to-br from-slate-900 to-indigo-950 text-white relative overflow-hidden">
+        {/* Background Elements */}
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
+          <div className="absolute top-10 left-10 w-72 h-72 bg-blue-500/10 rounded-full blur-[100px]"></div>
+          <div className="absolute bottom-10 right-10 w-96 h-96 bg-purple-500/10 rounded-full blur-[100px]"></div>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-bold mb-6 border border-indigo-500/30">
+              <Code className="h-3 w-3 mr-2" />
+              核心亮点
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
+              {content.showcase.title}
+            </h2>
+            <p className="text-slate-400 text-lg max-w-2xl mx-auto">
+              {content.showcase.subtitle}
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {content.showcase.items.map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+                whileHover={{ y: -5 }}
+                onClick={() => handleToolClick(i)}
+                className="bg-white/5 backdrop-blur-lg rounded-2xl p-6 border border-white/10 hover:border-indigo-500/50 hover:bg-white/10 transition-all group cursor-pointer active:scale-95"
+              >
+                <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center mb-6 shadow-lg shadow-indigo-500/20 group-hover:scale-110 transition-transform">
+                  {React.cloneElement(getShowcaseIcon(item.icon), { className: "h-6 w-6 text-white" })}
+                </div>
+                <h3 className="text-xl font-bold mb-2 text-white group-hover:text-indigo-300 transition-colors">{item.title}</h3>
+                <p className="text-slate-400 text-sm leading-relaxed">
+                  {item.desc}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Interactive Preview Mockup */}
+          <motion.div
+            id="demo-section"
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.4 }}
+            className="mt-16 max-w-4xl mx-auto scroll-mt-32"
+          >
+            <AICoachDemo activeId={activeTool} />
+          </motion.div>
+        </div>
+      </section>
+
       <footer className="bg-slate-900 py-12 border-t border-slate-800">
         <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="text-center md:text-left">
@@ -557,11 +638,8 @@ function App() {
           </div>
           
           <div className="flex flex-col items-center">
-            <div className="w-24 h-24 bg-white rounded-lg p-1 mb-2">
-              {/* Placeholder for QR Code */}
-              <div className="w-full h-full bg-slate-200 flex items-center justify-center text-xs text-slate-400">
-                二维码
-              </div>
+            <div className="w-24 h-24 bg-white rounded-lg p-1 mb-2 overflow-hidden">
+              <img src={qrcodeImg} alt="QR Code" className="w-full h-full object-cover" />
             </div>
             <span className="text-slate-400 text-xs">扫码咨询</span>
           </div>
