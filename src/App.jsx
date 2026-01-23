@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  Target, 
-  Users, 
-  Zap, 
-  Trophy, 
+import {
+  Target,
+  Users,
+  Zap,
+  Trophy,
   Check,
   X,
   MessageCircle,
@@ -15,7 +15,10 @@ import {
   Rocket,
   Brain,
   Layers,
-  Code
+  Code,
+  Video,
+  Palette,
+  GitBranch
 } from 'lucide-react';
 import AICoachDemo from './components/AICoachDemo';
 import content from './content.json';
@@ -275,11 +278,24 @@ function App() {
   };
 
   const handleToolClick = (toolIndex) => {
-    const toolMap = ['customer-service', 'contract-gen', 'competitor-analysis', 'meeting-summary'];
-    setActiveTool(toolMap[toolIndex]);
-    const element = document.getElementById('demo-section');
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+    // 确保这里的顺序与 content.json 中的 items 顺序完全一致
+    // 0: 营销脚本 (marketing-script)
+    // 1: 智能客服 (customer-service)
+    // 2: 会议纪要 (meeting-summary)
+    // 3: 创意工坊 (creative-workshop)
+    const toolMap = ['marketing-script', 'customer-service', 'meeting-summary', 'creative-workshop'];
+    
+    // 确保索引在有效范围内
+    if (toolIndex >= 0 && toolIndex < toolMap.length) {
+      setActiveTool(toolMap[toolIndex]);
+      
+      // 使用 setTimeout 确保状态更新后再滚动，或者直接滚动
+      setTimeout(() => {
+        const element = document.getElementById('demo-section');
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
     }
   };
 
@@ -300,7 +316,10 @@ function App() {
       MessageCircle: <MessageCircle />,
       FileText: <FileText />,
       Target: <Target />,
-      Clock: <Clock />
+      Clock: <Clock />,
+      Video: <Video />,
+      Palette: <Palette />,
+      Workflow: <GitBranch />
     };
     return icons[iconName] || <Code />;
   };

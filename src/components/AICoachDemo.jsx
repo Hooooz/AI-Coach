@@ -167,21 +167,45 @@ const AICoachDemo = ({ activeId }) => {
         className="flex-1 overflow-y-auto custom-scrollbar bg-[radial-gradient(circle_at_top_right,rgba(30,41,59,1),rgba(15,23,42,1))]"
       >
         {currentTool.mode === 'iframe' ? (
-          <iframe 
-            src={currentTool.iframeUrl} 
-            className="w-full h-full border-0"
-            allow="microphone"
-            title="Marketing Script Assistant"
-          />
-        ) : currentTool.mode === 'image-placeholder' ? (
-          <div className="w-full h-full flex flex-col items-center justify-center text-slate-500 gap-4">
-             <div className="w-3/4 h-3/4 bg-slate-800 rounded-xl border-2 border-dashed border-slate-700 flex items-center justify-center">
-                <div className="text-center">
-                  <ImageIcon className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                  <p>创意工坊演示截图位</p>
-                  <p className="text-xs opacity-50 mt-1">请在此处放置实际产品截图</p>
+          <div className="w-full h-full p-4">
+             <div className="w-full h-full rounded-2xl overflow-hidden border border-white/10 bg-slate-950 shadow-inner relative group">
+                {/* Fallback for Mixed Content Block */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/90 z-10 p-6 text-center">
+                  <p className="text-slate-400 text-sm mb-4">
+                    为了安全起见，浏览器可能会拦截外部演示内容。<br/>
+                    如果下方为空白，请点击按钮在新窗口打开。
+                  </p>
+                  <a 
+                    href={currentTool.iframeUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-2"
+                  >
+                    <Video className="h-4 w-4" /> 在新窗口打开演示
+                  </a>
+                  <button 
+                    onClick={(e) => e.currentTarget.parentElement.style.display = 'none'}
+                    className="mt-4 text-xs text-slate-500 hover:text-slate-300 underline"
+                  >
+                    尝试在当前窗口加载 (可能被拦截)
+                  </button>
                 </div>
+                
+                <iframe 
+                  src={currentTool.iframeUrl} 
+                  className="w-full h-full border-0 relative z-0"
+                  allow="microphone"
+                  title="Marketing Script Assistant"
+                />
              </div>
+          </div>
+        ) : currentTool.mode === 'image-placeholder' ? (
+          <div className="w-full h-full flex flex-col items-center justify-center bg-slate-900 p-6">
+             <img
+               src="/创意工坊.png"
+               alt="创意工坊"
+               className="w-full h-full object-contain rounded-2xl border border-white/10"
+             />
           </div>
         ) : (
           <div className="p-6 space-y-6">
@@ -251,21 +275,8 @@ const AICoachDemo = ({ activeId }) => {
       </div>
 
       {/* 底部输入/控制台区 */}
-      {currentTool.mode !== 'iframe' && currentTool.mode !== 'image-placeholder' && (
+      {currentTool.mode !== 'iframe' && currentTool.mode !== 'image-placeholder' && currentTool.id !== 'meeting-summary' && (
         <div className="p-5 bg-slate-800/80 border-t border-white/5 backdrop-blur-md">
-          {/* 会议纪要控制 */}
-          {currentTool.id === 'meeting-summary' && (
-            <div className="flex gap-3">
-              <button
-                onClick={startMeetingSimulation}
-                disabled={isRecording || isProcessing || isLoading}
-                className="flex-1 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white rounded-2xl py-3.5 flex items-center justify-center gap-2 font-bold transition-all shadow-lg shadow-indigo-600/20"
-              >
-                <Upload className="h-5 w-5" /> 模拟客户上传音频
-              </button>
-            </div>
-          )}
-
           {/* 通用对话输入（如智能客服） */}
           {currentTool.id === 'customer-service' && (
             <div className="relative">
