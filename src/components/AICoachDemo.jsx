@@ -135,7 +135,7 @@ const AICoachDemo = ({ activeId }) => {
             role: 'assistant', 
             content: '会议纪要已生成：',
             type: 'image',
-            src: '/会议纪要.png'
+            src: meetingSummaryImg
           }
         ]);
       }, 2000);
